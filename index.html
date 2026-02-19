@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Revenue Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <h1>Revenue Dashboard</h1>
+
+    <select id="branchFilter">
+        <option value="All">All Branches</option>
+        <option value="Chennai">Chennai</option>
+        <option value="Madurai">Madurai</option>
+    </select>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-row">
+
+        <div class="card kpi" id="revenueCard">
+            <span class="kpi-title">Revenue</span>
+            <span class="kpi-value">--</span>
+        </div>
+
+        <div class="card kpi" id="patientsCard">
+            <span class="kpi-title">Patients</span>
+            <span class="kpi-value">--</span>
+        </div>
+
+        <div class="card kpi" id="growthCard">
+            <span class="kpi-title">Revenue Growth</span>
+            <span class="kpi-value">--</span>
+        </div>
+
+    </div>
+
+    <!-- GRID SECTION -->
+    <div class="content-grid">
+
+        <div class="chart-card">
+            <canvas id="revenueChart"></canvas>
+        </div>
+
+        <div class="table-card">
+            <h3>Monthly Summary</h3>
+            <table id="summaryTable">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Revenue</th>
+                        <th>Patients</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="data.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

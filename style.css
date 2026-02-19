@@ -1,0 +1,84 @@
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6fb;
+    padding: 30px;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+select {
+    padding: 6px 10px;
+    margin-bottom: 18px;
+}
+
+.kpi-row {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 14px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.kpi {
+    flex: 1;
+    min-height: 85px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.kpi-title {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.kpi-value {
+    font-size: 26px;
+    font-weight: 600;
+    margin-top: 6px;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 18px;
+}
+
+.chart-card, .table-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+canvas {
+    max-height: 360px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+}
+
+th {
+    text-align: left;
+    font-size: 13px;
+    color: #6b7280;
+    padding: 8px 4px;
+    border-bottom: 1px solid #eee;
+}
+
+td {
+    padding: 10px 4px;
+    border-bottom: 1px solid #f2f2f2;
+    font-size: 14px;
+}
