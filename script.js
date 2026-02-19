@@ -1,125 +1,115 @@
-const ctx = document.getElementById('revenueChart');
 let chart;
 
-// BUILD CHART
-function buildChart(branch = "All") {
+function getFiltered(branch="All"){
+    return branch==="All" ? revenueData : revenueData.filter(d=>d.branch===branch);
+}
 
-    let filtered = revenueData;
-    if (branch !== "All") {
-        filtered = revenueData.filter(d => d.branch === branch);
-    }
+function buildChart(branch="All"){
+    const filtered=getFiltered(branch);
+    const months=[...new Set(filtered.map(d=>d.month))];
 
-    const months = [...new Set(filtered.map(d => d.month))];
+    const revenue=months.map(m=>filtered.filter(d=>d.month===m)
+                        .reduce((s,r)=>s+r.revenue,0));
 
-    const revenueValues = months.map(m =>
-        filtered.filter(d => d.month === m)
-                .reduce((sum, r) => sum + r.revenue, 0)
-    );
+    const patients=revenue.map(v=>Math.round(v/500));
 
-    const patientValues = revenueValues.map(v => Math.round(v / 500));
+    if(chart) chart.destroy();
 
-    if (chart) chart.destroy();
-
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: months,
-            datasets: [
-                {
-                    label: "Revenue",
-                    data: revenueValues,
-                    borderWidth: 3,
-                    tension: 0.3,
-                    yAxisID: 'yRevenue'
-                },
-                {
-                    label: "Patients",
-                    data: patientValues,
-                    borderDash: [6,4],
-                    borderWidth: 3,
-                    tension: 0.3,
-                    yAxisID: 'yPatients'
-                }
-            ]
-        },
-        options: {
-            maintainAspectRatio: false,
-            scales: {
-                yRevenue: { position: 'left' },
-                yPatients: {
-                    position: 'right',
-                    grid: { drawOnChartArea: false }
-                }
-            }
-        }
+    chart=new Chart(document.getElementById("revenueChart"),{
+        type:'line',
+        data:{labels:months,datasets:[
+            {label:"Revenue",data:revenue,borderWidth:3,tension:.3},
+            {label:"Patients",data:patients,borderDash:[6,4],borderWidth:3}
+        ]},
+        options:{maintainAspectRatio:false}
     });
 }
 
-// UPDATE KPI CARDS
-function updateCards(branch = "All") {
+function updateCards(branch="All"){
+    const f=getFiltered(branch);
+    const total=f.reduce((s,r)=>s+r.revenue,0);
+    const patients=Math.round(total/500);
 
-    let filtered = revenueData;
-    if (branch !== "All") {
-        filtered = revenueData.filter(d => d.branch === branch);
-    }
+    document.querySelector("#revenueCard .kpi-value").innerText=total.toLocaleString("en-IN");
+    document.querySelector("#patientsCard .kpi-value").innerText=patients.toLocaleString("en-IN");
 
-    const totalRevenue = filtered.reduce((sum, r) => sum + r.revenue, 0);
-    const patients = Math.round(totalRevenue / 500);
-
-    document.querySelector("#revenueCard .kpi-value").innerText =
-        totalRevenue.toLocaleString("en-IN");
-
-    document.querySelector("#patientsCard .kpi-value").innerText =
-        patients.toLocaleString("en-IN");
-
-    const first = filtered[0]?.revenue || 0;
-    const last = filtered[filtered.length - 1]?.revenue || 0;
-
-    let growth = first > 0 ? ((last-first)/first)*100 : 0;
-
-    const growthEl = document.querySelector("#growthCard .kpi-value");
-    growthEl.innerText = growth.toFixed(1) + "%";
-    growthEl.style.color = growth >= 0 ? "#16a34a" : "#dc2626";
+    const growth=((f[f.length-1].revenue-f[0].revenue)/f[0].revenue)*100;
+    const g=document.querySelector("#growthCard .kpi-value");
+    g.innerText=growth.toFixed(1)+"%";
+    g.style.color=growth>=0?"#16a34a":"#dc2626";
 }
 
-// UPDATE TABLE
-function updateTable(branch = "All") {
+function updateTable(branch="All"){
+    const f=getFiltered(branch);
+    const months=[...new Set(f.map(d=>d.month))];
+    const tbody=document.querySelector("#summaryTable tbody");
+    tbody.innerHTML="";
+    months.forEach(m=>{
+        const r=f.filter(d=>d.month===m).reduce((s,x)=>s+x.revenue,0);
+        const p=Math.round(r/500);
+        tbody.insertAdjacentHTML("beforeend",
+        `<tr><td>${m}</td><td>${r.toLocaleString("en-IN")}</td><td>${p}</td></tr>`);
+    });
+}
 
-    let filtered = revenueData;
-    if (branch !== "All") {
-        filtered = revenueData.filter(d => d.branch === branch);
-    }
+function buildBar(branch="All"){
+    const f=getFiltered(branch);
+    const months=[...new Set(f.map(d=>d.month))];
+    const vals=months.map(m=>f.filter(d=>d.month===m).reduce((s,r)=>s+r.revenue,0));
+    new Chart(document.getElementById("monthlyBarChart"),{
+        type:"bar",data:{labels:months,datasets:[{data:vals,label:"Monthly Revenue"}]},
+        options:{maintainAspectRatio:false}
+    });
+}
 
-    const months = [...new Set(filtered.map(d => d.month))];
-    const tbody = document.querySelector("#summaryTable tbody");
-    tbody.innerHTML = "";
+function buildDept(branch="All"){
+    const f=getFiltered(branch);
+    const depts=[...new Set(f.map(d=>d.dept))];
+    const vals=depts.map(dep=>f.filter(d=>d.dept===dep).reduce((s,r)=>s+r.revenue,0));
+    new Chart(document.getElementById("deptChart"),{
+        type:"bar",data:{labels:depts,datasets:[{data:vals,label:"Dept Revenue"}]},
+        options:{maintainAspectRatio:false}
+    });
+}
 
-    months.forEach(month => {
-        const revenue = filtered
-            .filter(d => d.month === month)
-            .reduce((sum, r) => sum + r.revenue, 0);
+function buildService(branch="All"){
+    const f=getFiltered(branch);
+    const services=[...new Set(f.map(d=>d.service))];
+    const vals=services.map(s=>f.filter(d=>d.service===s).reduce((s1,r)=>s1+r.revenue,0));
+    new Chart(document.getElementById("serviceChart"),{
+        type:"pie",data:{labels:services,datasets:[{data:vals}]},
+        options:{maintainAspectRatio:false}
+    });
+}
 
-        const patients = Math.round(revenue / 500);
-
-        tbody.insertAdjacentHTML("beforeend", `
-            <tr>
-                <td>${month}</td>
-                <td>${revenue.toLocaleString("en-IN")}</td>
-                <td>${patients.toLocaleString("en-IN")}</td>
-            </tr>
-        `);
+function buildBranchSplit(){
+    const branches=[...new Set(revenueData.map(d=>d.branch))];
+    const vals=branches.map(b=>revenueData.filter(d=>d.branch===b)
+                        .reduce((s,r)=>s+r.revenue,0));
+    new Chart(document.getElementById("yearPieChart"),{
+        type:"doughnut",data:{labels:branches,datasets:[{data:vals}]},
+        options:{maintainAspectRatio:false}
     });
 }
 
 // INITIAL LOAD
-buildChart();
-updateCards();
-updateTable();
+buildChart(); updateCards(); updateTable();
+buildBar(); buildDept(); buildService(); buildBranchSplit();
 
-// FILTER EVENT
-document.getElementById("branchFilter").addEventListener("change", function() {
-    const branch = this.value;
-    buildChart(branch);
-    updateCards(branch);
-    updateTable(branch);
-});
+// TOP FILTER
+document.getElementById("branchFilter").onchange=e=>{
+    const b=e.target.value;
+    buildChart(b); updateCards(b); updateTable(b);
+    buildBar(b); buildDept(b); buildService(b);
+};
+
+// PANEL TOGGLE
+document.getElementById("filterBtn").onclick=()=>{
+    document.getElementById("filterPanel").classList.add("open");
+};
+document.getElementById("closeFilters").onclick=()=>{
+    document.getElementById("filterPanel").classList.remove("open");
+};
+function toggleFilters(){
+    document.getElementById("filterPanel").classList.toggle("open");
+}

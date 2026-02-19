@@ -2,15 +2,51 @@
 <html>
 
 <head>
-    <title>Revenue Dashboard</title>
+    <title>Healthcare Revenue Intelligence Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<button class="filter-btn" onclick="toggleFilters()">⚙ Filters</button>
+
+<div id="filterPanel" class="filter-panel">
+
+    <button class="filter-close" onclick="toggleFilters()">×</button>
+
+    <h3>Filters</h3>
+
+    <label>Branch</label>
+    <select id="panelBranch">
+        <option value="All">All</option>
+        <option value="Chennai">Chennai</option>
+        <option value="Madurai">Madurai</option>
+    </select>
+
+    <label>Department</label>
+    <select id="panelDept">
+        <option value="All">All</option>
+        <option value="IP">IP</option>
+        <option value="OP">OP</option>
+    </select>
+
+    <label>Service</label>
+    <select id="panelService">
+        <option value="All">All</option>
+        <option>Surgery</option>
+        <option>Consultation</option>
+        <option>Diagnostics</option>
+        <option>Pharmacy</option>
+    </select>
+
+    <button id="applyFilters">Apply</button>
+
+</div>
+
 <div class="dashboard-container">
 
-    <h1>Revenue Dashboard</h1>
+    <h1>Healthcare Revenue Intelligence Dashboard</h1>
+    <p class="subtitle">Performance insights across branches, departments and services</p>
 
     <select id="branchFilter">
         <option value="All">All Branches</option>
@@ -18,9 +54,8 @@
         <option value="Madurai">Madurai</option>
     </select>
 
-    <!-- KPI CARDS -->
+    <!-- KPI -->
     <div class="kpi-row">
-
         <div class="card kpi" id="revenueCard">
             <span class="kpi-title">Revenue</span>
             <span class="kpi-value">--</span>
@@ -35,14 +70,37 @@
             <span class="kpi-title">Revenue Growth</span>
             <span class="kpi-value">--</span>
         </div>
-
     </div>
 
-    <!-- GRID SECTION -->
+    <!-- GRID -->
     <div class="content-grid">
 
         <div class="chart-card">
+            <h3>Revenue vs Patients Trend</h3>
+            <p class="chart-sub">Monthly performance comparison</p>
             <canvas id="revenueChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Monthly Revenue Distribution</h3>
+            <p class="chart-sub">Revenue by month</p>
+            <canvas id="monthlyBarChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Revenue by Department</h3>
+            <p class="chart-sub">IP vs OP performance</p>
+            <canvas id="deptChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Service Contribution</h3>
+            <p class="chart-sub">Revenue share by service</p>
+            <canvas id="serviceChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <canvas id="yearPieChart"></canvas>
         </div>
 
         <div class="table-card">
