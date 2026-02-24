@@ -1,18 +1,112 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Healthcare Revenue Intelligence Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="data.js"></script>
 </head>
 
 <body>
 
-<button class="filter-btn" onclick="toggleFilters()">⚙ Filters</button>
+<div class="dashboard-container">
 
+    <button id="filterBtn" class="filter-btn">⚙ Filters</button>
+    <button id="exportPDF" class="filter-btn" style="right:140px;">⬇ Export PDF</button>
+    <button id="darkModeBtn" onclick="toggleDarkMode()">🌙</button>
+
+    <h1>Healthcare Revenue Intelligence Dashboard</h1>
+    <div class="subtitle">Performance insights across branches, departments and services</div>
+
+    <div class="kpi-row">
+        <div class="card kpi" id="revenueCard">
+            <span class="kpi-title">💰 Revenue</span>
+            <span class="kpi-value">--</span>
+        </div>
+        <div class="card kpi" id="patientsCard">
+            <span class="kpi-title">🧍 Patients</span>
+            <span class="kpi-value">--</span>
+        </div>
+        <div class="card kpi" id="growthCard">
+            <span class="kpi-title">📈 Revenue Growth</span>
+            <span class="kpi-value">--</span>
+        </div>
+    </div>
+
+    <div class="content-grid">
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <span>Revenue vs Patients Trend</span>
+            <button class="export-btn" onclick="exportExcel('revenueTrend')">Export</button>
+        </div>
+        <canvas id="revenueChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <span>Day-wise Patient Visits</span>
+            <button class="export-btn" onclick="exportExcel('dayPatients')">Export</button>
+        </div>
+        <canvas id="dayPatientChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <span>Monthly Revenue Distribution</span>
+            <button class="export-btn" onclick="exportExcel('monthlyBar')">Export</button>
+        </div>
+        <canvas id="monthlyBarChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <span>Revenue by Department</span>
+            <button class="export-btn" onclick="exportExcel('department')">Export</button>
+        </div>
+        <canvas id="deptChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <span>Service Contribution</span>
+            <button class="export-btn" onclick="exportExcel('service')">Export</button>
+        </div>
+        <canvas id="serviceChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <span>Branch Revenue Split</span>
+            <button class="export-btn" onclick="exportExcel('branchSplit')">Export</button>
+        </div>
+        <canvas id="yearPieChart"></canvas>
+    </div>
+
+    <div class="table-card">
+        <div class="chart-header">
+            <span>Monthly Summary</span>
+            <button class="export-btn" onclick="exportExcel('tableData')">Export</button>
+        </div>
+
+        <table id="summaryTable">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Revenue</th>
+                    <th>Patients</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- FILTER PANEL -->
 <div id="filterPanel" class="filter-panel">
 
-    <button class="filter-close" onclick="toggleFilters()">×</button>
+    <button id="closeFilters" class="filter-close">×</button>
 
     <h3>Filters</h3>
 
@@ -23,107 +117,30 @@
         <option value="Madurai">Madurai</option>
     </select>
 
-    <label>Department</label>
-    <select id="panelDept">
+    <label>Year</label>
+    <select id="panelYear">
         <option value="All">All</option>
-        <option value="IP">IP</option>
-        <option value="OP">OP</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
     </select>
 
-    <label>Service</label>
-    <select id="panelService">
+    <label>Month</label>
+    <select id="panelMonth">
         <option value="All">All</option>
-        <option>Surgery</option>
-        <option>Consultation</option>
-        <option>Diagnostics</option>
-        <option>Pharmacy</option>
+        <option>Jan</option><option>Feb</option><option>Mar</option>
+        <option>Apr</option><option>May</option><option>Jun</option>
+        <option>Jul</option><option>Aug</option><option>Sep</option>
+        <option>Oct</option><option>Nov</option><option>Dec</option>
     </select>
 
     <button id="applyFilters">Apply</button>
 
 </div>
 
-<div class="dashboard-container">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <h1>Healthcare Revenue Intelligence Dashboard</h1>
-    <p class="subtitle">Performance insights across branches, departments and services</p>
-
-    <select id="branchFilter">
-        <option value="All">All Branches</option>
-        <option value="Chennai">Chennai</option>
-        <option value="Madurai">Madurai</option>
-    </select>
-
-    <!-- KPI -->
-    <div class="kpi-row">
-        <div class="card kpi" id="revenueCard">
-            <span class="kpi-title">Revenue</span>
-            <span class="kpi-value">--</span>
-        </div>
-
-        <div class="card kpi" id="patientsCard">
-            <span class="kpi-title">Patients</span>
-            <span class="kpi-value">--</span>
-        </div>
-
-        <div class="card kpi" id="growthCard">
-            <span class="kpi-title">Revenue Growth</span>
-            <span class="kpi-value">--</span>
-        </div>
-    </div>
-
-    <!-- GRID -->
-    <div class="content-grid">
-
-        <div class="chart-card">
-            <h3>Revenue vs Patients Trend</h3>
-            <p class="chart-sub">Monthly performance comparison</p>
-            <canvas id="revenueChart"></canvas>
-        </div>
-
-        <div class="chart-card">
-            <h3>Monthly Revenue Distribution</h3>
-            <p class="chart-sub">Revenue by month</p>
-            <canvas id="monthlyBarChart"></canvas>
-        </div>
-
-        <div class="chart-card">
-            <h3>Revenue by Department</h3>
-            <p class="chart-sub">IP vs OP performance</p>
-            <canvas id="deptChart"></canvas>
-        </div>
-
-        <div class="chart-card">
-            <h3>Service Contribution</h3>
-            <p class="chart-sub">Revenue share by service</p>
-            <canvas id="serviceChart"></canvas>
-        </div>
-
-        <div class="chart-card">
-            <canvas id="yearPieChart"></canvas>
-        </div>
-
-        <div class="table-card">
-            <h3>Monthly Summary</h3>
-            <table id="summaryTable">
-                <thead>
-                    <tr>
-                        <th>Month</th>
-                        <th>Revenue</th>
-                        <th>Patients</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-    </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="data.js"></script>
 <script src="script.js"></script>
-
 </body>
 </html>
+
