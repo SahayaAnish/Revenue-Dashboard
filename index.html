@@ -1,146 +1,100 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Healthcare Revenue Intelligence Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="data.js"></script>
+  <title>Healthcare Revenue Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="data.js"></script>
 </head>
 
 <body>
-
-<div class="dashboard-container">
-
-    <button id="filterBtn" class="filter-btn">⚙ Filters</button>
-    <button id="exportPDF" class="filter-btn" style="right:140px;">⬇ Export PDF</button>
-    <button id="darkModeBtn" onclick="toggleDarkMode()">🌙</button>
-
-    <h1>Healthcare Revenue Intelligence Dashboard</h1>
+  <div class="dashboard-container">
+    <button id="filterBtn" class="filter-btn">⚙ Filters</button> <button id="exportPDF" class="filter-btn" style="right:140px;">⬇ Export PDF</button> <button id="darkModeBtn" onclick="toggleDarkMode()">🌙</button>
+    <h1>Healthcare Revenue Dashboard</h1>
     <div class="subtitle">Performance insights across branches, departments and services</div>
-
     <div class="kpi-row">
-        <div class="card kpi" id="revenueCard">
-            <span class="kpi-title">💰 Revenue</span>
-            <span class="kpi-value">--</span>
-        </div>
-        <div class="card kpi" id="patientsCard">
-            <span class="kpi-title">🧍 Patients</span>
-            <span class="kpi-value">--</span>
-        </div>
-        <div class="card kpi" id="growthCard">
-            <span class="kpi-title">📈 Revenue Growth</span>
-            <span class="kpi-value">--</span>
-        </div>
+      <div class="card kpi" id="revenueCard"> <span class="kpi-title">💰 Revenue</span> <span class="kpi-value">--</span> </div>
+      <div class="card kpi" id="patientsCard"> <span class="kpi-title">🧍 Patients</span> <span class="kpi-value">--</span> </div>
+      <div class="card kpi" id="growthCard"> <span class="kpi-title">📈 Revenue Growth</span> <span class="kpi-value">--</span> </div>
     </div>
-
     <div class="content-grid">
-
-    <div class="chart-card">
-        <div class="chart-header">
-            <span>Revenue vs Patients Trend</span>
-            <button class="export-btn" onclick="exportExcel('revenueTrend')">Export</button>
-        </div>
+      <div class="chart-card">
+        <div class="chart-header"> <span>Revenue vs Patients Trend</span> <button class="export-btn" onclick="exportExcel('revenueTrend')">Export</button> </div>
         <canvas id="revenueChart"></canvas>
-    </div>
-
-    <div class="chart-card">
-        <div class="chart-header">
-            <span>Day-wise Patient Visits</span>
-            <button class="export-btn" onclick="exportExcel('dayPatients')">Export</button>
-        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"> <span>Day-wise Patient Visits</span> <button class="export-btn" onclick="exportExcel('dayPatients')">Export</button> </div>
         <canvas id="dayPatientChart"></canvas>
-    </div>
-
-    <div class="chart-card">
-        <div class="chart-header">
-            <span>Monthly Revenue Distribution</span>
-            <button class="export-btn" onclick="exportExcel('monthlyBar')">Export</button>
-        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"> <span>Monthly Revenue Distribution</span> <button class="export-btn" onclick="exportExcel('monthlyBar')">Export</button> </div>
         <canvas id="monthlyBarChart"></canvas>
-    </div>
-
-    <div class="chart-card">
-        <div class="chart-header">
-            <span>Revenue by Department</span>
-            <button class="export-btn" onclick="exportExcel('department')">Export</button>
-        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"> <span>Revenue by Department</span> <button class="export-btn" onclick="exportExcel('department')">Export</button> </div>
         <canvas id="deptChart"></canvas>
-    </div>
-
-    <div class="chart-card">
-        <div class="chart-header">
-            <span>Service Contribution</span>
-            <button class="export-btn" onclick="exportExcel('service')">Export</button>
-        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"> <span>Service Contribution</span> <button class="export-btn" onclick="exportExcel('service')">Export</button> </div>
         <canvas id="serviceChart"></canvas>
-    </div>
-
-    <div class="chart-card">
-        <div class="chart-header">
-            <span>Branch Revenue Split</span>
-            <button class="export-btn" onclick="exportExcel('branchSplit')">Export</button>
-        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"> <span>Branch Revenue Split</span> <button class="export-btn" onclick="exportExcel('branchSplit')">Export</button> </div>
         <canvas id="yearPieChart"></canvas>
-    </div>
-
-    <div class="table-card">
-        <div class="chart-header">
-            <span>Monthly Summary</span>
-            <button class="export-btn" onclick="exportExcel('tableData')">Export</button>
-        </div>
-
+      </div>
+      <div class="table-card">
+        <div class="chart-header"> <span>Monthly Summary</span> <button class="export-btn" onclick="exportExcel('tableData')">Export</button> </div>
         <table id="summaryTable">
-            <thead>
-                <tr>
-                    <th>Month</th>
-                    <th>Revenue</th>
-                    <th>Patients</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Revenue</th>
+              <th>Patients</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
         </table>
+      </div>
     </div>
-
-</div>
-
-<!-- FILTER PANEL -->
-<div id="filterPanel" class="filter-panel">
-
-    <button id="closeFilters" class="filter-close">×</button>
-
-    <h3>Filters</h3>
-
-    <label>Branch</label>
-    <select id="panelBranch">
+    <!-- FILTER PANEL -->
+    <div id="filterPanel" class="filter-panel">
+      <button id="closeFilters" class="filter-close">×</button>
+      <h3>Filters</h3>
+      <label>Branch</label>
+      <select id="panelBranch">
         <option value="All">All</option>
         <option value="Chennai">Chennai</option>
         <option value="Madurai">Madurai</option>
-    </select>
-
-    <label>Year</label>
-    <select id="panelYear">
+      </select>
+      <label>Year</label>
+      <select id="panelYear">
         <option value="All">All</option>
         <option value="2024">2024</option>
         <option value="2025">2025</option>
-    </select>
-
-    <label>Month</label>
-    <select id="panelMonth">
+      </select>
+      <label>Month</label>
+      <select id="panelMonth">
         <option value="All">All</option>
-        <option>Jan</option><option>Feb</option><option>Mar</option>
-        <option>Apr</option><option>May</option><option>Jun</option>
-        <option>Jul</option><option>Aug</option><option>Sep</option>
-        <option>Oct</option><option>Nov</option><option>Dec</option>
-    </select>
-
-    <button id="applyFilters">Apply</button>
-
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script src="script.js"></script>
+        <option>Jan</option>
+        <option>Feb</option>
+        <option>Mar</option>
+        <option>Apr</option>
+        <option>May</option>
+        <option>Jun</option>
+        <option>Jul</option>
+        <option>Aug</option>
+        <option>Sep</option>
+        <option>Oct</option>
+        <option>Nov</option>
+        <option>Dec</option>
+      </select>
+      <button id="applyFilters">Apply</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
 </body>
-</html>
 
+</html>
