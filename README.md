@@ -1,4 +1,4 @@
-# 🏥 Healthcare Revenue Intelligence Dashboard
+# 🏥 Healthcare Revenue Dashboard
 
   A responsive web-based healthcare analytics dashboard built using HTML, CSS, JavaScript, and Chart.js to visualize hospital performance across branches, departments, services, and time periods.
 
